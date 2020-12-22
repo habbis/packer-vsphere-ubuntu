@@ -1,0 +1,97 @@
+{
+  "builders": [
+    {
+      "CPUs": 2,
+      "RAM": 2048,
+      "boot_command": [
+        "<esc><esc><esc>",
+        "<enter><wait>",
+        "/casper/vmlinuz ",
+        "root=/dev/sr0 ",
+        "initrd=/casper/initrd ",
+        "autoinstall ",
+        "ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/",
+        "<enter>"
+      ],
+      "boot_wait": "2s",
+      "cluster": "{{ user `vcenter_cluster` }}",
+      "convert_to_template": true,
+      "datacenter": "{{ user `vcenter_dc` }}",
+      "datastore": "{{ user `vcenter_datastore` }}",
+      "resource_pool":"pool01",
+      "disk_controller_type": "pvscsi",
+      "guest_os_type": "ubuntu64Guest",
+      "host": "{{ user `esx_host` }}",
+      "http_directory": "http",
+      "insecure_connection": "{{ user `vcenter_ignore_ssl` }}",
+      "iso_checksum": "sha256:443511f6bf12402c12503733059269a2e10dec602916c0a75263e5d990f6bb93",
+      "iso_urls": [
+        "https://releases.ubuntu.com/20.04/ubuntu-20.04.1-live-server-amd64.iso"
+      ],
+      "name": "{{ user `vm_name` }}",
+      "network_adapters": [
+        {
+          "network": "{{ user `vcenter_network` }}",
+          "network_card": "vmxnet3"
+        }
+      ],
+      "password": "{{ user `vcenter_password` }}",
+      "ssh_password": "{{user `ssh_username`}}",
+      "ssh_username": "{{user `ssh_password`}}",
+      "ssh_port": 22,
+      "ssh_timeout": "20m",
+      "ssh_handshake_attempts": "20",
+      "storage": [
+        {
+          "disk_size": 25000,
+          "disk_thin_provisioned": true
+        }
+      ],
+      "type": "vsphere-iso",
+      "username": "{{ user `vcenter_user` }}",
+      "vcenter_server": "{{ user `vcenter_address` }}",
+      "vm_name": "{{ user `vm_name` }}"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "playbook_file": "./{{user `ansible_playbook`}}"
+    }
+ 
+  ],
+
+
+"post-processors": [
+{
+  "type": "vsphere-template",
+  "host": "{{user `vcenter_address`}}",
+  "insecure": true,
+  "username": "{{user `vcenter_user`}}",
+  "password": "{{user `vcenter_password`}}",
+  "datacenter": "{{user `vcenter_dc`}}",
+  "folder": "/Discovered virtual machine/"
+}
+ 
+ ],
+  "sensitive-variables": [
+    "vcenter_password"
+  ],
+  "variables": {
+    "esx_host": "your_esxi_host",
+    "vcenter_address": "yourvcenter",
+    "vcenter_cluster": "cluster",
+    "resource_pool":"pool",
+    "vcenter_datastore": "datastore",
+    "vcenter_dc": "yourdc",
+    "vcenter_ignore_ssl": "true",
+    "vcenter_network": "test",
+    "vcenter_user": "youruser",
+    "vcenter_password": "yourpass",
+    "vm_name": "Ubuntu2004",
+    "ansible_playbook":"server-lite.yml",
+    "ssh_username":"ubuntu",
+    "ssh_password": "vmware"
+
+  }
+}

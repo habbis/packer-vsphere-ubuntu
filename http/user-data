@@ -1,0 +1,27 @@
+#cloud-config
+autoinstall:
+  version: 1
+  early-commands:
+   - sudo systemctl stop ssh
+  locale: en_US
+  keyboard:
+    layout: gb
+  identity:
+    hostname: ubuntu2004
+    username: ubuntu
+  # For password crypt, use: mkpasswd -m sha-512 
+    password: vmware
+  late-commands:
+    - "echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu"
+    - "chmod 440 /target/etc/sudoers.d/ubuntu"
+    # use mac for dhcp client identifier - stops different ip being allocated after each reboot
+    - sed -i 's/^#*\(send dhcp-client-identifier\).*$/\1 = hardware;/' /target/etc/dhcp/dhclient.conf
+    - 'sed -i "s/dhcp4: true/&\n      dhcp-identifier: mac/" /target/etc/netplan/00-installer-config.yaml'
+    - sudo systemctl start ssh
+  packages:
+   - open-vm-tools
+  ssh:
+    install-server: true
+    allow-pw: yes
+    #authorized-keys:
+     #- <optionally add ssh keys here>

@@ -4,14 +4,15 @@
       "CPUs": 2,
       "RAM": 2048,
       "boot_command": [
-        "<esc><esc><esc>",
-        "<enter><wait>",
-        "/casper/vmlinuz ",
-        "root=/dev/sr0 ",
-        "initrd=/casper/initrd ",
-        "autoinstall ",
-        "ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/",
-        "<enter>"
+         "<enter><enter><f6><esc><wait> ",                                                                                                                                                                          
+         "<esc><esc><esc>",                                                                                                                                                                                         
+         "<enter><wait>",                                                                                                                                                                                           
+         "/casper/vmlinuz ",                                                                                                                                                                                        
+         "root=/dev/sr0 ",                                                                                                                                                                                          
+         "initrd=/casper/initrd ",                                                                                                                                                                                  
+         "autoinstall ",                                                                                                                                                                                            
+         "ds=nocloud-net;seedfrom=http://{{ .HTTPIP }}:{{ .HTTPPort }}/",                                                                                                                                           
+         "<enter><wait>"
       ],
       "boot_wait": "2s",
       "cluster": "{{ user `vcenter_cluster` }}",
